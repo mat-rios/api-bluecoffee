@@ -59,4 +59,3 @@ jobs:
           app-name: 'BluCoffee'
           slot-name: 'Production'
           package: '*.war'
-          
