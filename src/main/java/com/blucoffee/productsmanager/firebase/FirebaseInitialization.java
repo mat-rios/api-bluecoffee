@@ -6,25 +6,30 @@ import com.google.firebase.FirebaseOptions;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 @Service
 public class FirebaseInitialization {
 
     @PostConstruct
-    public void initialization() {
+    public void initialization(){
         try {
-            // Carrega o arquivo serviceAccountKey.json do classpath
-            InputStream serviceAccount = getClass().getResourceAsStream("/serviceAccountKey.json");
+            String serviceAccountKey = System.getenv("FIREBASE_SERVICE_ACCOUNT_KEY");
+            if (serviceAccountKey == null || serviceAccountKey.isEmpty()) {
+                throw new RuntimeException("Firebase service account key is not set in environment variables");
+            }
+
+            InputStream serviceAccount = new ByteArrayInputStream(serviceAccountKey.getBytes());
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
 
             FirebaseApp.initializeApp(options);
-        } catch (IOException e) {
-            throw new RuntimeException("Falha ao inicializar o Firebase", e);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
