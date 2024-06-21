@@ -21,8 +21,15 @@ jobs:
         with:
           java-version: '17'
 
+      - name: Set environment variable for Firebase service account key
+        env:
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+        run: echo "FIREBASE_SERVICE_ACCOUNT_KEY is set"
+
       - name: Build with Maven
         run: mvn clean install
+        env:
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
